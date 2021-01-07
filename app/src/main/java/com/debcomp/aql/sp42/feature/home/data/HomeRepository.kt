@@ -11,6 +11,7 @@ import com.debcomp.aql.sp42.feature.home.data.service.HomeService
 import com.debcomp.aql.sp42.feature.home.model.entity.Cadet
 import com.debcomp.aql.sp42.feature.home.model.entity.User
 import com.debcomp.aql.sp42.infra.Constants
+import com.debcomp.aql.sp42.infra.util.MyFileUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +32,12 @@ class HomeRepository(private val app: Application) {
     val cadetResponse = MutableLiveData<Cadet>()
     val allUsersResponse = MutableLiveData<List<User>>()
 
+    lateinit var apiKey: String
+
+    init {
+        apiKey = MyFileUtils.readFile(app)
+    }
+
     @WorkerThread
     suspend fun getCadetById(userId: String) {
         if (networkAvailable(app)) {
@@ -42,7 +49,7 @@ class HomeRepository(private val app: Application) {
             val service = retrofit
                     .create(HomeService::class.java)
             val serviceData = service
-                    .getCadetById(userId)
+                    .getCadetById(apiKey, userId)
 
             serviceData.enqueue(object : Callback<Cadet> {
                 override fun onResponse(call: Call<Cadet>, response: Response<Cadet>) {
@@ -67,7 +74,7 @@ class HomeRepository(private val app: Application) {
             val service = retrofit
                     .create(HomeService::class.java)
             val serviceData = service
-                    .getAllCadets(page)
+                    .getAllCadets(apiKey, page)
 
             serviceData.enqueue(object : Callback<List<User>> {
                 override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
