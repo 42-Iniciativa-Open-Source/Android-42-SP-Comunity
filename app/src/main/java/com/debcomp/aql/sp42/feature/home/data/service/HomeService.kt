@@ -15,15 +15,15 @@ import retrofit2.http.*
  */
 interface HomeService {
 
-    @Headers("Authorization: " + Constants.AUTH)
     @GET("users/{user_id}")
     fun getCadetById(
+            @Header("Authorization") key: String,
             @Path(value = "user_id") userId: String
     ): Call<Cadet>
 
-    @Headers("Authorization: " + Constants.AUTH)
     @GET("campus/20/users?per_page=100&sort=id")
     fun getAllCadets(
+            @Header("Authorization") key: String,
             @Query("page")page: Int
     ) : Call<List<User>>
 
